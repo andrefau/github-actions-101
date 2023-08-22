@@ -28,12 +28,12 @@ jobs:
         run: dotnet build --no-restore --configuration Release $Project
 
       - name: "Run tests"
-        run: dotnet test --no-build --configuration Release --verbosity normal --logger trx $Project
+        run: dotnet test --no-build --configuration Release --verbosity normal --logger "trx;LogFileName=test-results.trx" $Project
 
       - name: "Test report"
         uses: dorny/test-reporter@v1
         if: success() || failure()
         with:
           name: Test result
-          path: Notes.Api.Test/TestResults/*.trx
+          path: "**/test-results.trx"
           reporter: dotnet-trx
