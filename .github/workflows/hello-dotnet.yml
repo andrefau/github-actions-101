@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
 
 env:
-  PATH: Notes.Api.Test/Notes.Api.Test.csproj
+  Project: Notes.Api.Test/Notes.Api.Test.csproj
 
 jobs:
   build-test:
@@ -22,13 +22,13 @@ jobs:
         run: dotnet --version
 
       - name: "Restore"
-        run: dotnet restore $PATH
+        run: dotnet restore $Project
 
       - name: "Build"
-        run: dotnet build --no-restore --configuration Release $PATH
+        run: dotnet build --no-restore --configuration Release $Project
 
       - name: "Run tests"
-        run: dotnet test --no-build --configuration Release --verbosity normal --logger trx $PATH
+        run: dotnet test --no-build --configuration Release --verbosity normal --logger trx $Project
 
       - name: "Test report"
         uses: dorny/test-reporter@v1
