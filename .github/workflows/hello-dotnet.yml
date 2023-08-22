@@ -6,6 +6,10 @@ on:
 jobs:
   build-test:
     runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+      checks: write
     env:
       Notes_Api_Test: "Notes.Api.Test/Notes.Api.Test.csproj"
 
