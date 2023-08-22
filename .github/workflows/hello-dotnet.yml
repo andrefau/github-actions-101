@@ -3,37 +3,39 @@ name: "Hello .NET"
 on:
   workflow_dispatch:
 
-env:
-  Project: Notes.Api.Test/Notes.Api.Test.csproj
-
 jobs:
   build-test:
     runs-on: ubuntu-latest
+    env:
+      Notes_Api_Test: "Notes.Api.Test/Notes.Api.Test.csproj"
 
     steps:
       - uses: actions/checkout@v3
 
       - name: "Setup .NET Core SDK"
-        uses: actions/setup-dotnet@v3
+        uses: actions/setup-dotnet@v2
         with:
           dotnet-version: "6.0.x"
 
-      - name: "Print .NET CLI version"
-        run: dotnet --version
+      - name: "Restore Tests"
+        run: dotnet restore $Notes_Api_Test
 
-      - name: "Restore"
-        run: dotnet restore $Project
+      - name: "Build Tests"
+        run: dotnet build --no-restore --configuration Release $Notes_Api_Test
 
-      - name: "Build"
-        run: dotnet build --no-restore --configuration Release $Project
+      - name: "Run Tests"
+        run: |
+          dotnet test \
+            --no-build \
+            --configuration Release \
+            --verbosity normal \
+            --logger trx \
+            $Notes_Api_Test
 
-      - name: "Run tests"
-        run: dotnet test --no-build --configuration Release --verbosity normal --logger "trx;LogFileName=test-results.trx" $Project
-
-      - name: "Test report"
+      - name: "Report Tests"
         uses: dorny/test-reporter@v1
         if: success() || failure()
         with:
-          name: Test result
-          path: "**/test-results.trx"
+          name: test-report
+          path: Notes.Api.Test/TestResults/*.trx
           reporter: dotnet-trx
